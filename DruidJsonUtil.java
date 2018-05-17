@@ -25,19 +25,9 @@ public class DruidJsonUtil {
 		JSONObject jsonObject = JSONObject.fromObject(loadData);
 		JSONObject jsonObject2 = jsonObject.getJSONObject("content");
 		JSONArray jsonArray = jsonObject2.getJSONArray("filter");
-		String inOp=null;
-		String outOp=null;
+
+		List<Map<String,Object>> listMap = new ArrayList<Map<String,Object>>();
 		
-		List<Object> inList2 = new ArrayList<Object>();
-		List<Object> outList2 = new ArrayList<Object>();
-		
-		String isFirst=null;
-		
-		
-		String op3=null;
-		String op4=null;
-		
-		List<Object> firstList = new ArrayList<Object>();
 		for (int i = 0; i < jsonArray.size(); i++) {
 			
 			JSONObject jsonObject3 = jsonArray.getJSONObject(i);
@@ -45,24 +35,33 @@ public class DruidJsonUtil {
 			String op = jsonObject3.getString("op");
 			
 			
-//			String setType = jsonObject3.getString("setType");
 			JSONArray valueArray = jsonObject3.getJSONArray("values");
 			
 			List<Object> inList = new ArrayList<Object>();
 			List<Object> outList = new ArrayList<Object>();
 			
+			List<Object> inList2 = new ArrayList<Object>();
+			List<Object> outList2 = new ArrayList<Object>();
+			
 			
 			
 			String op1=null;
 			String op2=null;
+			String op3=null;
+			String op4=null;
 			
-			String string2=null;
+			String inOp=null;
+			String outOp=null;
 			
+			String firstFilter=null;
 			
+			boolean isAdd=false;
+			
+			String tempD=null;
 			
 			for (int index = 0; index < valueArray.size(); index++) {
 				JSONObject jsonObject4 = valueArray.getJSONObject(index);
-//				String rule = jsonObject4.getString("rule");
+				
 				String opv = jsonObject4.getString("op");
 				String value = jsonObject4.getString("value");
 				
@@ -71,79 +70,122 @@ public class DruidJsonUtil {
 				jsonValue.put("type", "selector");
 				jsonValue.put("dimension", dimension);
 				jsonValue.put("value", value);
-				String jsonString = JSONObject.fromObject(jsonValue).toString();
+				String filter = JSONObject.fromObject(jsonValue).toString();
 				
-				if(i==0 || index==0)
+				if(index==0)
 				{
-					firstList.add(jsonString);
+					firstFilter=filter;
 					continue;
 				}
-				
-				if(valueArray.size()>1)
+				if(dimension.equals(tempD))
 				{
 					if(opv.equals(inOp))
 					{
-						op1=opv;
-						inList.add(jsonString);
-						inList.add(firstList);
+						if(op2==null)
+						{
+							op2=opv;
+						}
+						if(!isAdd)
+						{
+							outList.add(firstFilter);
+							isAdd=true;
+						}
+						outList.add(filter);
 					}
 					else
 					{
-						op2=opv;
-						outList.add(jsonString);
-						outList.add(firstList);
+						if(op1==null)
+						{
+							op1=opv;
+						}
+						if(!isAdd)
+						{
+							inList.add(firstFilter);
+							isAdd=true;
+						}
+						inList.add(filter);
 					}
 				}
 				else
 				{
 					if(op.equals(outOp))
 					{
-						op3=outOp;
-						inList2.add(jsonString);
-						inList2.add(firstList);
+						if(op4==null)
+						{
+							op4=op;
+						}
+						if(!isAdd)
+						{
+							outList2.add(firstFilter);
+							isAdd=true;
+						}
+						outList2.add(filter);
 					}
 					else
 					{
-						op4=outOp;
-						outList2.add(jsonString);
-						outList2.add(firstList);
+						if(op3==null)
+						{
+							op3=op;
+						}
+						if(!isAdd)
+						{
+							inList2.add(firstFilter);
+							isAdd=true;
+						}
+						inList2.add(filter);
 					}
-				}
-				if(firstList!=null && firstList.size()>0)
-				{
-					firstList.clear();
 				}
 				
 				inOp=opv;
 				outOp=op;
+				tempD=dimension;
 				
 			}
 			
-			Map<String, Object> map1 = new HashMap<String,Object>();
+			if(valueArray.size()>1)
+			{
+				if(op1!=null)
+				{
+					Map<String, Object> map1 = new HashMap<String,Object>();
+					
+					map1.put("type", op1);//
+					map1.put("fields", inList);
+					String string = JSONObject.fromObject(map1).toString();
+					outList.add(string);
+				}
+				if(op2!=null)
+				{
+					Map<String, Object> map2 = new HashMap<String,Object>();
+					map2.put("type", op2);
+					map2.put("fields", outList);
+				}
+				////////////////////////////////////////////////
+				
+				if(op3!=null)
+				{
+					Map<String, Object> map1 = new HashMap<String,Object>();
+					
+					map1.put("type", op3);//
+					map1.put("fields", inList2);
+					String string = JSONObject.fromObject(map1).toString();
+					outList2.add(string);
+				}
+				if(op4!=null)
+				{
+					Map<String, Object> map2 = new HashMap<String,Object>();
+					map2.put("type", op4);
+					map2.put("fields", outList2);
+				}
+			}
 			
-			map1.put("type", op1);//
-			map1.put("fields", inList);
-			String string = JSONObject.fromObject(map1).toString();
-			outList.add(string);
 			
-			Map<String, Object> map2 = new HashMap<String,Object>();
-			map2.put("type", op2);
-			map2.put("fields", outList);
-			string2 = JSONObject.fromObject(map2).toString();
-			inList2.add(string2);
+			
+			
+			
+			
+			
 		}
 		
-		Map<String, Object> map3 = new HashMap<String,Object>();
-		
-		map3.put("type", op3);//
-		map3.put("fields", inList2);
-		String string = JSONObject.fromObject(map3).toString();
-		outList2.add(string);
-		
-		Map<String, Object> map4 = new HashMap<String,Object>();
-		map4.put("type", op4);
-		map4.put("fields", outList2);
-		String string2 = JSONObject.fromObject(map4).toString();
 		return string2;
 	}
 
