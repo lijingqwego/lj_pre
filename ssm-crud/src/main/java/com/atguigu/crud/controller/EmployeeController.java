@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,7 +24,6 @@ import com.atguigu.crud.bean.Msg;
 import com.atguigu.crud.service.EmployeeService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.sun.xml.internal.org.jvnet.staxex.NamespaceContextEx.Binding;
 
 /**
  * 处理员工 CRUD请求
@@ -53,7 +51,7 @@ public class EmployeeController {
 		//批量删除
 		if(ids.contains("-")){
 			System.out.println("多个删除");
-			List<Integer> del_ids = new ArrayList<>();
+			List<Integer> del_ids = new ArrayList<Integer>();
 			 String[] str_ids = ids.split("-");
 			 //组装id的集合
 			 for(String string : str_ids){
@@ -166,7 +164,7 @@ public class EmployeeController {
 	@ResponseBody
 	public Msg saveEmp(@Valid Employee employee,BindingResult result){
 		if(result.hasErrors()){
-			Map<String,Object> map= new HashMap<>();
+			Map<String,Object> map= new HashMap<String,Object>();
 			//校验失败，应该返回失败，在模态框中显示校验失败的信息
 			List<FieldError> errors = result.getFieldErrors(); //提取出错误信息
 			for(FieldError fieldError : errors){

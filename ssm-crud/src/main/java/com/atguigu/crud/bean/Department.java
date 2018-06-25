@@ -10,7 +10,6 @@ public class Department {
 		// TODO Auto-generated constructor stub
 	}
 
-    //存在有参构造器一定要生成无参构造器
 	public Department(Integer deptId, String deptName) {
 		super();
 		this.deptId = deptId;
