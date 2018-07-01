@@ -155,6 +155,11 @@
 		<div class="col-md-12">
 			<h1>SSM_CRUD</h1>
 		</div>
+		
+		<form id="upload_form" enctype="multipart/form-data"> 
+             <input id="news_scheme_upload_file" name="file" type="text" style="width:300px" data-options="required:true,prompt:'请选择导出生成的excel文件'">
+        	<button class="btn btn-primary" id="emp_upload">上传</button>
+        </form>
 
 		<!--按钮-->
 		<div class="row">
@@ -626,7 +631,27 @@
 				});
 			}
 		});
-	
+		
+		
+		
+		
+		
+        $('#emp_upload').on('click',function(){
+        	
+            	//使用FormData，进行Ajax请求并'上传文件'.普通异步传递无法传传递文件,下面一句相当于把表单中的所有属性都封装进去了.
+                var formData = new FormData(document.getElementById("upload_form")); 
+                $.ajax({ 
+                    url : '${APP_PATH}/upload', 
+                    type : 'POST', 
+                    data : formData, 
+                    // 告诉jQuery不要去处理发送的数据
+                    processData : false, 
+                    // 告诉jQuery不要去设置Content-Type请求头
+                    contentType : false,
+                    success : function(data) {}
+                });
+        });
+
 	</script>
 
 	<script type="text/javascript"

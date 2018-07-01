@@ -89,5 +89,9 @@ public class EmployeeService {
 		
 	}
 
+	public void saveEmps(List<Employee> emps) {
+		employeeMapper.saveEmps(emps);
+	}
+
 
 }
