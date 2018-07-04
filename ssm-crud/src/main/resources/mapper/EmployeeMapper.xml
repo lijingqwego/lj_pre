@@ -201,9 +201,6 @@
 			15:30:51 CST 2017. -->
 		insert into tbl_emp
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-			<if test="empId != null">
-				emp_id,
-			</if>
 			<if test="empName != null">
 				emp_name,
 			</if>
@@ -218,9 +215,6 @@
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
-			<if test="empId != null">
-				#{empId,jdbcType=INTEGER},
-			</if>
 			<if test="empName != null">
 				#{empName,jdbcType=VARCHAR},
 			</if>
